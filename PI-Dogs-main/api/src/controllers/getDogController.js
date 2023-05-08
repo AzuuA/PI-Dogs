@@ -1,11 +1,14 @@
+const {Dog, Temperament}=require('../db')
 const axios = require("axios");
 const { API_KEY } = process.env;
-const { Dog, Temperament } = require("../db");
-const getAllDogs = async () => {
-  const newApi = await axios.get(   
+
+
+const getAll = async ()=>{
+    
+  const api = await axios.get(   
     `https://api.thedogapi.com/v1/breeds?api_key=${API_KEY}`
   );
-  const myInfo = await newApi.data.map((e) => {
+  const apiData =await api.data.map((e) => {
     return {  
       id: e.id,  
       name: e.name,
@@ -19,26 +22,24 @@ const getAllDogs = async () => {
       created: false
     };
   });
-
-  return myInfo;
-};
-const dataInfo = async () => {//buscar perros y temperamentos en la db
-  return await Dog.findAll({//filtra resultados y ordena datos, busca
+return apiData
+}
+const dataDB = async () => {
+  return await Dog.findAll({
     include: [
       {
         model: Temperament,
         attributes: ["name"],
-        through: {//no en la tabla intermedia 
+        through: {
           attributes: [],
         },
       },
     ],
   });
 };
-const allInfo = async () => {// trae la info de la api y de la db
-  // lista completa de perros 
-  const searchApi = await getAllDogs();
-  let searchDb = await dataInfo();
+const getAllDogs= async()=>{
+  const searchApi = await getAll();
+  let searchDb = await dataDB();
   searchDb = await searchDb.map((e) => {
     return {
       id: e.id,
@@ -54,14 +55,29 @@ const allInfo = async () => {// trae la info de la api y de la db
         .map((e) => {      
           return e.name;           
         })  
-        .join(", "),// separa el una lista de elementos con una coma, toma una lista[] y devuelve una cadena 
-      createdInDb: e.createdInDb,
+        .join(", "),
+      created: e.created,
     };
   });
-  const totalInfo = [...searchApi, ...searchDb];
-  return totalInfo;
-};
-module.exports = {
-  getAllDogs,
-  allInfo,
-}; 
+  const allInfo = [...searchApi, ...searchDb];
+  return allInfo;
+}
+const getName=async(name)=>{
+  const allDogs=await getAll()
+  try{
+    const filter=allDogs.filter((d)=>{
+      return d.name.toLowerCase().includes(name.toLowerCase())
+    })
+    if(filter.length===0){
+      return "No hay recetas con ese nombre"
+    }
+    return filter
+  }
+  catch (error) {
+    console.log(error);
+    return "Hubo un error al buscar.";
+  }
+}
+
+
+module.exports={getAll,getName}

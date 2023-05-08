@@ -1,6 +1,13 @@
 
 const { Router } = require("express");
 const dogRouter = Router();
+const {getDogHandler,getDogById}= require('../handlers/dogHandler')
+
+dogRouter
+  .get('/',getDogHandler)
+  .get('/:id',getDogById)
+  /*.post('/',postDogHandler)
+  .delete('/:id',deleteDogHandler)
 const { allInfo} = require("../controllers/dogController");
 
 
@@ -15,7 +22,7 @@ dogRouter.get("/", async (req, res) => {
       );
       searchName.length
         ? res.status(200).json(searchName)
-        : res.status(404).send("Not found");
+        : res.status(404).send({ error: error.message});
     } else {
       res.status(200).json(apiDog);
     }
@@ -29,7 +36,7 @@ dogRouter.get("/:id", async (req, res) => {
   const allId = await allInfo();
   try {
     if (!id){
-     res.status(404).send("Not found");
+     res.status(404).send({ error: error.message});
     }else{
       const searchId = await allId.find(e => e.id.toString() === id);
       res.status(200).json(searchId);
