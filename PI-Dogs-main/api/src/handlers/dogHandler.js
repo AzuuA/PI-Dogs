@@ -1,9 +1,9 @@
-const { getAll, getName } = require('../controllers/getDogController');
+const { getAllDogs, getName } = require('../controllers/getDogController');
 const { getById } = require('../controllers/getById');
 
 const getDogHandler = async (req, res) => {
   const { name } = req.query;
-  const results = name ? await getName(name) : await getAll();
+  const results = name ? await getName(name) : await getAllDogs();
   res.status(200).json(results);
 };
 

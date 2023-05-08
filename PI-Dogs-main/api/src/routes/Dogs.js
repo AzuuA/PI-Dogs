@@ -2,12 +2,12 @@
 const { Router } = require("express");
 const dogRouter = Router();
 const {getDogHandler,getDogById}= require('../handlers/dogHandler')
-
+const{postDogHandler}=require('../handlers/postHandler')
 dogRouter
   .get('/',getDogHandler)
   .get('/:id',getDogById)
-  /*.post('/',postDogHandler)
-  .delete('/:id',deleteDogHandler)
+  .post('/',postDogHandler)
+  /*.delete('/:id',deleteDogHandler)
 const { allInfo} = require("../controllers/dogController");
 
 

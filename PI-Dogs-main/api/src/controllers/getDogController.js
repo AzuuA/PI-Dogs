@@ -80,4 +80,4 @@ const getName=async(name)=>{
 }
 
 
-module.exports={getAll,getName}
+module.exports={getAllDogs,getName}
